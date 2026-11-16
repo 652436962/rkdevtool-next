@@ -79,6 +79,13 @@ xattr -dr com.apple.quarantine "/Applications/RKDevTool Next.app"
 
 从 Release 下载并解压 `RKDevTool-Next-CLI` 后，在解压目录运行 `rkdevcli`，无需启动桌面或 MCP。下例使用 Bash；Windows PowerShell 的入口是 `.\rkdevcli.exe`。
 
+Debian / Ubuntu 也可以直接安装 Linux x64 的 CLI `.deb`，安装后 `rkdevcli` 位于 `PATH` 中：
+
+```bash
+sudo apt install ./RKDevTool-Next-CLI_*_linux-x64.deb
+rkdevcli scan
+```
+
 ```bash
 ./rkdevcli scan
 ./rkdevcli inspect update.img
@@ -163,6 +170,14 @@ cargo build --locked --release --manifest-path src-tauri/Cargo.toml \
   --no-default-features --features headless-cli --bin rkdevcli
 ```
 
+在 Linux 上需要可安装的 Debian 包时，运行：
+
+```bash
+./scripts/package-cli-deb.sh
+```
+
+脚本默认读取 `src-tauri/tauri.conf.json` 的版本号，产物为 `RKDevTool-Next-CLI_<版本>_linux-x64.deb`，包内只包含 `rkdevcli`、README 与许可证，可用 `--version` / `--bin` / `--out` 覆盖默认值。
+
 ## 适用范围
 
 - Loader 和固件必须与实际开发板匹配，可用操作随 Loader 能力而异。独立 RAM Loader 下载会下发有效容器项，不会因「仅用于 Flash」标记而拒绝；但不保证受保护或签名 Loader 能启动。持久化 IDB 写入会拒绝这类 Loader。
@@ -222,8 +237,8 @@ Linux 源码构建需安装 WebKitGTK 4.1、OpenSSL、AppIndicator、librsvg、p
 
 [GitHub Actions 工作流](.github/workflows/desktop-build.yml) 使用 GitHub-hosted runner：
 
-- 推送 `main`、提交 Pull Request，或手动运行：构建 **macOS arm64 / Windows x64 / Linux x86_64** 桌面安装包和 CLI 压缩包，保存为 Actions artifacts。登录 GitHub 后，可从对应运行的 **Artifacts** 下载 Linux `.deb` 和 `.AppImage` 试用包。
-- 推送 `v*` 标签：校验标签与源码版本一致；全部构建成功后，将七个产物一起发布到 GitHub Release。
+- 推送 `main`、提交 Pull Request，或手动运行：构建 **macOS arm64 / Windows x64 / Linux x86_64** 桌面安装包、CLI 压缩包和 Linux CLI `.deb`，保存为 Actions artifacts。登录 GitHub 后，可从对应运行的 **Artifacts** 下载 Linux `.deb` 和 `.AppImage` 试用包。
+- 推送 `v*` 标签：校验标签与源码版本一致；全部构建成功后，将八个产物一起发布到 GitHub Release。
 - 任一平台失败：不发布新的 Release。上传失败时保留草稿，可修复流水线后重跑；已发布的版本不覆盖，后续修改使用新版本号。
 
 发布新版本时，同步修改以下版本号并提交：
